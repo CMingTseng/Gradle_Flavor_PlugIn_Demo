@@ -1,0 +1,407 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: 'com.github.ximik3.drive'
+
+// https://developer.android.com/studio/publish/app-signing
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "30.0.2"
+    Version version = readVersion()
+    defaultConfig {
+        applicationId "com.zinc.com.zinc.flavordemo"
+        minSdkVersion 19
+        targetSdkVersion 28
+        versionCode version.versionCode.toInteger()
+        versionName version.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    applicationVariants.all { variant ->
+        def full_buildTypename = variant.buildType.name.toString()
+        def flavorName = variant.flavorName
+        def env = ""
+        def buildType = full_buildTypename.split("_")[0]
+//        if (full_buildTypename.contains("debug") || full_buildTypename.contains("dev")) return
+//        if (buildType == "prod") {
+//            env = ""
+//        } else {
+//            env = "_" + buildType
+//        }
+//        variant.outputs.each { output ->
+//            output.outputFileName = "${flavorName}${env}_plug_v${versionName}.apk"
+//        }
+    }
+
+    signingConfigs {
+        gradleStudy {
+            keyAlias keystoreProperties['keyAlias1']
+            keyPassword keystoreProperties['keyPassword1']
+            storeFile file(keystoreProperties['storeFile1'])
+            storePassword keystoreProperties['storePassword1']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        xiaopenyou {
+            keyAlias keystoreProperties['keyAlias2']
+            keyPassword keystoreProperties['keyPassword2']
+            storeFile file(keystoreProperties['storeFile2'])
+            storePassword keystoreProperties['storePassword2']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        jiangpengyong {
+            keyAlias keystoreProperties['keyAlias3']
+            keyPassword keystoreProperties['keyPassword3']
+            storeFile file(keystoreProperties['storeFile3'])
+            storePassword keystoreProperties['storePassword3']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        debug {
+            keyAlias keystoreProperties['keyAlias1']
+            keyPassword keystoreProperties['keyPassword1']
+            storeFile file(keystoreProperties['storeFile1'])
+            storePassword keystoreProperties['storePassword1']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
+            matchingFallbacks = ['release', 'debug']
+            zipAlignEnabled false
+            minifyEnabled false
+            debuggable true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+//            signingConfig signingConfigs.gradleStudy
+            matchingFallbacks = ['release', 'debug']
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions('abi', 'version')
+    // 创建产品风味
+    productFlavors {
+        amd64 {
+            // 关联纬度
+            dimension 'version'
+            applicationIdSuffix '.v1'
+            externalNativeBuild {
+                ndkBuild {
+                    // Passes an optional argument to ndk-build.
+                    arguments "NDK_MODULE_PATH+=../../third_party/modules"
+                }
+                // For ndk-build, instead use the ndkBuild block.
+                cmake {
+                    // Passes optional arguments to CMake.
+                    arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_TOOLCHAIN=clang"
+
+                    // Sets a flag to enable format macro constants for the C compiler.
+                    cFlags "-D__STDC_FORMAT_MACROS"
+
+                    // Sets optional flags for the C++ compiler.
+                    cppFlags "-fexceptions", "-frtti"
+
+                    // Specifies the library and executable targets from your CMake project
+                    // that Gradle should build.
+                    targets "libexample-one", "my-executible-demo"
+                }
+            }
+        }
+
+        x86 {
+            dimension 'abi'
+            applicationId 'com.zinc.bear'
+            manifestPlaceholders = [
+                    hostName: "www.x86.com",
+                    logo    : "@drawable/logo",
+                    appName : "bear",
+            ]
+
+            signingConfig signingConfigs.jiangpengyong
+            versionCode 1898
+            versionName '1.8.98'
+            buildConfigField('String', 'name', '"XiaoPenYou"')
+            buildConfigField('int', 'age', '26')
+            matchingFallbacks = ['pro']
+            missingDimensionStrategy 'version', 'v1'
+        }
+
+        armV7 {
+            dimension 'abi'
+            applicationId 'com.zinc.shark'
+            manifestPlaceholders = [
+                    hostName: "www.armv7.com",
+                    logo    : "@drawable/logo",
+                    appName : "shark",
+            ]
+
+            signingConfig signingConfigs.xiaopenyou
+            versionCode 1666
+            versionName '1.6.66'
+            buildConfigField('String', 'name', '"JiangPengYong"')
+            buildConfigField('int', 'age', '26')
+        }
+
+        armV8 {
+            dimension 'abi'
+            applicationId 'com.zinc.shark'
+            manifestPlaceholders = [
+                    hostName: "www.armv8.com",
+                    logo    : "@drawable/logo",
+                    appName : "shark",
+            ]
+
+            signingConfig signingConfigs.xiaopenyou
+            versionCode 1666
+            versionName '1.6.66'
+            buildConfigField('String', 'name', '"JiangPengYong"')
+            buildConfigField('int', 'age', '26')
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs('src/main/java')
+//            groovy.srcDirs('src/main/java')
+            resources.srcDirs = ['src/main/res']
+        }
+        test.java.srcDirs = ['src/test/java']
+//        test.groovy.srcDirs = ['src/test/java']
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dexOptions {
+        javaMaxHeapSize "3g"
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    x86Implementation project(':flavor_x86')
+
+    testImplementation 'com.auth0:java-jwt:+'
+    testImplementation 'com.google.api-client:google-api-client:+'
+    testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.3'
+    testImplementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    testImplementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    testImplementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    testImplementation "com.squareup.okhttp3:okhttp:3.14.0"
+    testImplementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.14.0'
+    testImplementation 'com.google.code.gson:gson:2.8.6'
+    testImplementation 'commons-codec:commons-codec:1.15'
+    testImplementation 'com.clouway.security:jwt-java-client-okhttp:0.0.2'
+}
+
+
+class Version {
+    def versionCode
+    def versionName
+}
+
+Version readVersion() {
+    readVersionWithFlavor("")
+}
+
+Version  readVersionWithFlavor(String flavor) {
+    def version_properties_path = 'version.properties'
+    if (flavor ==null || flavor.equals("")){
+    }else {
+        version_properties_path = "./src/"+flavor+"/version.properties"
+    }
+    if (version_properties_path == null || version_properties_path.equals("")){
+        version_properties_path='version.properties'
+    }
+    Properties defaultVersionProps = new Properties()
+    def pfile = file(version_properties_path)
+    if (!pfile.exists()) {
+        pfile = file('version.properties')
+    }
+    defaultVersionProps.load(new FileInputStream(pfile))
+    def defaultBuildVersionCode = defaultVersionProps['VERSION_CODE']
+    def defaultBuildVersionName = defaultVersionProps['VERSION_NAME_PREFIX'] + "." + defaultVersionProps['VERSION_NAME_BUILD']
+    return new Version(versionCode: defaultBuildVersionCode, versionName: defaultBuildVersionName)
+}
+
+def increaseVersionWithFlavor(String flavor) {
+    if (flavor ==null || flavor.equals("")){
+        increaseVersionWithPath('version.properties')
+    }else {
+        def path = "./src/"+flavor+"/version.properties"
+        increaseVersionWithPath(path)
+    }
+}
+
+def increaseVersionWithPath(String version_properties_path) {
+    Properties versionProps = new Properties()
+    def pfile = file(version_properties_path)
+    if (!pfile.exists()) {
+        pfile = file('version.properties')
+    }
+    versionProps.load(new FileInputStream(pfile))
+    def buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD']
+    println "Show "+this.project.name +" current : $buildVersionName"
+    def hotfix = versionProps['VERSION_NAME_HOTFIX'].toInteger()
+    def nextCode = versionProps['VERSION_CODE'].toInteger() - hotfix + 10
+    versionProps['VERSION_CODE'] = nextCode.toString()
+    def nextBuild = versionProps['VERSION_NAME_BUILD'].toInteger() + 1
+    versionProps['VERSION_NAME_BUILD'] = nextBuild.toString()
+    hotfix = 0
+    versionProps['VERSION_NAME_HOTFIX'] = hotfix.toString()
+    versionProps.store(pfile.newWriter(), null)
+    buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD']
+    println "Increase $buildVersionName"
+}
+
+def increaseHotfixVersionWithFlavor(String flavor) {
+    if (flavor ==null || flavor.equals("")){
+        increaseHotfixVersionWithPath('version.properties')
+    }else {
+        def path = "./src/"+flavor+"/version.properties"
+        increaseHotfixVersionWithPath(path)
+    }
+}
+
+def increaseHotfixVersionWithPath(String version_properties_path) {
+    Properties versionProps = new Properties()
+    def pfile = file(version_properties_path)
+    if (!pfile.exists()) {
+        pfile = file('version.properties')
+    }
+    versionProps.load(new FileInputStream(pfile))
+    def buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD']
+    println "Show "+this.project.name +" current : $buildVersionName"
+    def nextCode = versionProps['VERSION_CODE'].toInteger() + 1
+    versionProps['VERSION_CODE'] = nextCode.toString()
+    def hotfix = versionProps['VERSION_NAME_HOTFIX'].toInteger() + 1
+    versionProps['VERSION_NAME_HOTFIX'] = hotfix.toString()
+    versionProps.store(pfile.newWriter(), null)
+    buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD'] + "." + versionProps['VERSION_NAME_HOTFIX']
+    println "Increase Hotfix $buildVersionName"
+}
+
+def decreaseVersionWithFlavor(String flavor) {
+    if (flavor ==null || flavor.equals("")){
+        decreaseVersionWithPath('version.properties')
+    }else {
+        def path = "./src/"+flavor+"/version.properties"
+        decreaseVersionWithPath(path)
+    }
+}
+
+def decreaseVersionWithPath(String version_properties_path) {
+    Properties versionProps = new Properties()
+    def pfile = file(version_properties_path)
+    if (!pfile.exists()) {
+        pfile = file('version.properties')
+    }
+    versionProps.load(new FileInputStream(pfile))
+    def preCode = versionProps['VERSION_CODE'].toInteger() - 1
+    versionProps['VERSION_CODE'] = preCode.toString()
+    def preBuild = versionProps['VERSION_NAME_BUILD'].toInteger() - 1
+    versionProps['VERSION_NAME_BUILD'] = preBuild.toString()
+    versionProps.store(pfile.newWriter(), null)
+    def buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD']
+    println "Decrease $buildVersionName"
+}
+
+def showCurrentVersionWithFlavor(String flavor) {
+    def path = 'version.properties'
+    if (flavor ==null || flavor.equals("")){
+    }else {
+        path = "./src/"+flavor+"/version.properties"
+    }
+    Properties versionProps = new Properties()
+    def pfile = file(path)
+    versionProps.load(new FileInputStream(pfile))
+    def buildVersionName = versionProps['VERSION_NAME_PREFIX'] + "." + versionProps['VERSION_NAME_BUILD']
+    println this.project.name +" current : $buildVersionName"
+}
+
+def syncVersionAndTagWithFlavor(String flavor, int prefixn, int apifeaturen,  int buildn,int hotfixn) {
+    if (flavor ==null || flavor.equals("")){
+        syncVersionAndTagWithPath('version.properties',prefixn,apifeaturen,buildn,hotfixn)
+    }else {
+        def path = "./src/"+flavor+"/version.properties"
+        syncVersionAndTagWithPath(path,prefixn,apifeaturen,buildn,hotfixn)
+    }
+}
+
+def syncVersionAndTagWithPath(String version_properties_path, int prefixn, int apifeaturen,  int buildn,int hotfixn) {
+    Properties versionProps = new Properties()
+    if (version_properties_path == null || version_properties_path.equals("")) {
+        version_properties_path = 'version.properties'
+    }
+    def pfile = file(version_properties_path)
+    if (!pfile.exists()) {
+        pfile = file('version.properties')
+    }
+    versionProps.load(new FileInputStream(pfile))
+    println "Show prefix " + (prefixn * 10000000)
+    println "Show api_feature  " + (apifeaturen * 10000)
+    println "Show build " + (buildn * 10)
+    println "Show hotfix " + hotfixn
+    println "Show VERSION_CODE " + ((prefixn * 10000000)+(apifeaturen * 10000)+(buildn * 10)+hotfixn)
+    versionProps['VERSION_NAME_PREFIX'] = prefixn.toString()+"."+apifeaturen.toString()
+    versionProps['VERSION_NAME_HOTFIX'] = hotfixn.toString()
+    versionProps['VERSION_NAME_BUILD'] = buildn.toString()
+    versionProps['VERSION_CODE'] = ((prefixn * 10000000)+(apifeaturen * 10000)+(buildn * 10)+hotfixn).toString()
+    versionProps.store(pfile.newWriter(), null)
+}
+
+task increaseVersion {
+    group "version Tasks"
+    doLast {
+        increaseVersionWithFlavor("")
+    }
+}
+
+task increaseHotfixVersion {
+    group "version Tasks"
+    doLast {
+        increaseHotfixVersionWithFlavor("")
+    }
+}
+
+task decreaseVersion {
+    group "version Tasks"
+    doLast {
+        decreaseVersionWithFlavor("")
+    }
+}
+
+task showCurrentVersion {
+    group "version Tasks"
+    showCurrentVersionWithFlavor("")
+}
