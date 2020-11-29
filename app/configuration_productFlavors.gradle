@@ -47,9 +47,11 @@ android {
 //            dependencies {
 //                implementation 'org.cks.demo.res:res_x86:1.11.13'
 //            }
+            dependencies {
+                implementation project(':res_x86_64')
+            }
         }
 
-        //TODO  this flavor demo set dependencies at  productFlavors.all
         x86 {
             dimension 'abi'
             applicationId 'com.zinc.bear'
@@ -58,7 +60,6 @@ android {
                     logo    : "@drawable/logo",
                     appName : "bear",
             ]
-
             signingConfig signingConfigs.jiangpengyong
             versionCode 1898
             versionName '1.8.98'
@@ -72,16 +73,11 @@ android {
         }
 
         armV7 {
+            //TODO  this flavor demo set dependencies at  productFlavors.all
             //TODO  this flavor demo set manifestPlaceholders at  productFlavors.all
             //TODO  this flavor demo set applicationIdSuffix at  productFlavors.all
             dimension 'abi'
             applicationId 'com.zinc.shark'
-            manifestPlaceholders = [
-                    hostName: "www.armv7.com",
-                    logo    : "@drawable/logo",
-                    appName : "shark",
-            ]
-
             signingConfig signingConfigs.xiaopenyou
             versionCode 1666
             versionName '1.6.66'
@@ -89,10 +85,6 @@ android {
             buildConfigField('int', 'age', '26')
             ext {
                 API_HOST = [stage: "https://sit-api-report.armV7lepenwang.com/", dev: "http://dev-api.armV7.com.tw/", prod: "https://api.armV7.com/"]
-            }
-            //FIXME fail use dependencies local module   : logo.png not change !!!
-            dependencies {
-                implementation project(':res_armv7')
             }
         }
 
@@ -105,7 +97,6 @@ android {
                     logo    : "@drawable/logo",
                     appName : "shark",
             ]
-
             signingConfig signingConfigs.xiaopenyou
             versionCode 1666
             versionName '1.6.66'
@@ -115,9 +106,7 @@ android {
                 API_HOST = [stage: "https://sit-api-report.arm64_v8alepenwang.com/", dev: "http://dev-api.arm64_v8a.com.tw/", prod: "https://api.arm64_v8a.com/"]
             }
             //FIXME fail use dependencies local module   : logo.png not change !!!
-            dependencies {
-                implementation project(':res_arm64')
-            }
+            dependencies.implementation(project(':res_arm64'))
         }
     }
 
@@ -127,13 +116,14 @@ android {
             flavor.manifestPlaceholders = [
                     hostName: "www.armv7.com",
                     logo    : "@drawable/logo",
-                    appName : "armV7",
+                    appName : "shark",
             ]
         }
         //FIXME fail use dependencies local module   : logo.png not change !!!
-        if (flavor.name.equals("x86")) {
+        if (flavor.name.equals("armV7")) {
             dependencies {
-                implementation project(":res_" + "$flavor.name")
+                def name = flavor.name.toString().toLowerCase()
+                implementation project(":res_" + "$name")
             }
         }
     }

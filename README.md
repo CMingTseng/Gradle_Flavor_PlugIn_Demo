@@ -110,7 +110,7 @@ here demo put version.gradle into github
 ```sh
 apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/version.gradle'
 ```
-[apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/version.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L5)
+[apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/version.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/7e0dcb027c3f98274a0b13d131a8a1936803c009/app/build.gradle#L5)
 
 ## 三、已有章节
 
@@ -258,6 +258,53 @@ apply from: './configuration_productFlavors.gradle'
 - 掘金: [android多渠道包（风味包）——安卓gradle](https://juejin.im/post/5da722dbf265da5b8e0f1773)
 
 - github代码: [传送门](https://github.com/zincPower/FlavorDemo)
+ 
+can set implementation at general or buildTypes or productFlavors sections if productFlavors also can use productFlavors.all
+
+
+```sh
+android {
+    dependencies {
+        // flavor.name+Implementation
+        x86Implementation project(':flavor_x86')
+    }
+}
+``` 
+
+```sh
+android {
+    productFlavors {
+        armV7 {
+             dependencies.implementation(project(':res_armv7'))  
+        }
+    }
+}
+``` 
+
+```sh
+android {
+    productFlavors {
+        armV8 {
+            dependencies {
+               implementation project(':res_arm64')
+            }
+        }
+    }
+}
+``` 
+
+```sh
+android {
+    productFlavors.all {flavor ->
+        if (flavor.name.equals("amd64")) {
+            dependencies {
+                def name = flavor.name.toString().toLowerCase()
+                implementation project(":res_" + "$name")
+            }
+        }
+    }
+}
+``` 
 
 ### 5、sourceSets
 
@@ -266,6 +313,51 @@ apply from: './configuration_productFlavors.gradle'
 - 掘金: [sourceSets——安卓gradle](https://juejin.im/post/5dd9eda7f265da7de667d2bc)
 
 - github代码: [传送门](https://github.com/zincPower/GradleStudy/blob/master/app/zinc_sourceSets.gradle)
+
+can set sourceSets at general or buildTypes or productFlavors sections if productFlavors also can use productFlavors.all
+
+
+```sh
+android {
+    sourceSets {
+        armV8 {
+            java.srcDirs('src/main/java')
+            resources.srcDirs = ['src/main/res']
+        } 
+    }
+}
+``` 
+
+
+
+```sh
+android {
+    productFlavors {
+        sourceSets {
+            amd64 {
+                java.srcDirs = ['src/main/java', '../flavor_x86/src/main/java']
+            }
+        }
+    }        
+}
+``` 
+
+
+
+
+```sh
+android {
+    productFlavors.all { flavor ->
+        if (flavor.name.equals("armV7")) {
+            sourceSets {
+                amd64 {
+                    java.srcDirs = ['src/main/java', '../armV7/src/main/java']
+                }
+            }
+        }            
+    }
+}
+``` 
 
 ### 6、lintOptions
 
