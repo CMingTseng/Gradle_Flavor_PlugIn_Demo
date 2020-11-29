@@ -69,10 +69,10 @@ now we must get version from extra
 
 so must firset define version 
 
-
 ```sh
 def version = this.ext.default_version()
 ```
+
 [def version = this.ext.default_version()](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L10)
 
 ## 三、已有章节
@@ -124,6 +124,17 @@ buildTypes {
 }
 ```
 
+but sometime do not want  default buildTypes (debug / release ) can use setIgnore at [variantFilter](https://developer.android.com/studio/build/build-variants#filter-variants) to ignore some default buildType
+
+[setIgnore(true))....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/0d2cff181f9f00b80f14c7c3032b5b5dcfe142b2/app/build.gradle#L127)
+```sh
+variantFilter { variant ->
+        def buildTypename = variant.buildType.name.toString()
+        if (buildTypename.equals('release') || buildTypename.equals('debug')) {
+            variant.setIgnore(true)
+        }
+}
+```
 
 ### 2、defaultConfig
 
