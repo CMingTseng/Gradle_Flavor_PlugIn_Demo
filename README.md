@@ -37,7 +37,40 @@ CSDN: [Android Gradle](https://blog.csdn.net/weixin_37625173/category_9350766.ht
 
 github: [GradleStudy](https://github.com/zincPower/GradleStudy)
 
-## 二、已有章节
+## 二、Gradle技巧
+
+can export gradle some section as standalone
+
+here use [Version](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/c7b5ced90bb1ad5618576474e200e29be2fda8bd/app/build.gradle#L228) to demo 
+
+```sh
+class Version {
+    def versionCode
+    def versionName
+}
+
+Version  readVersionWithFlavor(String flavor) {.....
+
+```
+
+now export  as standalone gradle file  : [version.gradle](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/master/app/version.gradle)
+
+now use  apply from to import standalone gradle file :
+
+```sh
+apply from: './version.gradle'
+```
+but something is different 
+
+now we must get version from extra 
+
+so must firset define version 
+
+```sh
+def version = this.ext.default_version()
+```
+
+## 三、已有章节
 
 ### 1、buildTypes
 
@@ -101,7 +134,7 @@ github: [GradleStudy](https://github.com/zincPower/GradleStudy)
 
 - github代码: [传送门](https://github.com/zincPower/GradleStudy/blob/master/app/zinc_splits.gradle)
 
-## 三、后续章节
+## 四、后续章节
 
 - dexOptions
 - externalNativeBuild
@@ -113,7 +146,7 @@ github: [GradleStudy](https://github.com/zincPower/GradleStudy)
 - signingConfigs
 - testOptions
 
-## 四、如何使用该项目
+## 五、如何使用该项目
 
 1. 打开根目录下的 settings.gradle 文件
 
@@ -124,7 +157,7 @@ github: [GradleStudy](https://github.com/zincPower/GradleStudy)
 project(':app').buildFileName = 'xxx.gradle'
 ```
 
-## 五、其他项目推荐
+## 六、其他项目推荐
 
 ### 1、Android 高级UI
 
