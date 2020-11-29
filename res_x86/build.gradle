@@ -21,6 +21,13 @@ ext {
     mavRepoInternalUrl = "path/to/internal/repo"
     mavLibraryLicenses = ["Apache-2.0": 'http://www.apache.org/licenses/LICENSE-2.0.txt']
     mavLibraryDescription = "an AES decrypt and encrypt for jni !!"
+
+    isToRemoteRepo =true
+    isToInternalRepo = true
+    isToMavenLocal = true
+    isToGit = false
+    isSonatype_Nexus = true
+    Sonatype_NexusUrl_Url="http://private.nexus.in:8081/repository/android/"
 }
 android {
     compileSdkVersion 30
@@ -57,12 +64,12 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
 }
 
-//apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/install.gradle'
-//File f = this.file('bintray.properties')
-//if (f.exists() && !f.isDirectory()) {
-//    assert file(f).exists()
-//    apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/bintray.gradle'
-//}
+apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/install.gradle'
+File f = this.file('bintray.properties')
+if (f.exists() && !f.isDirectory()) {
+    assert file(f).exists()
+    apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/bintray.gradle'
+}
 task showCurrentVersion {
     group "version Tasks"
     this.project.ext.currentVersion("")
