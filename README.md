@@ -376,6 +376,12 @@ android {
 - 掘金: [splits——安卓gradle](https://juejin.im/post/5ddfe513e51d45027e2a7e96)
 
 - github代码: [传送门](https://github.com/zincPower/GradleStudy/blob/master/app/zinc_splits.gradle)
+  
+### 8、Gradle Plugin
+can develop gradle plugin by groovy/java/kotlin. sometime must store apk into cloud storage
+so use deploy to Google Drive plugin . now try modify [gradle-drive](https://github.com/ximik3/gradle-drive) to demo 
+use groovy/java/kotlin develop plugin
+
 
 ## 四、后续章节
 
