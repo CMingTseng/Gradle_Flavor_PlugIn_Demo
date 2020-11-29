@@ -103,6 +103,15 @@ task showCurrentVersion {
 
 [def version = this.ext.default_version()](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L10)
 
+with gradle special ability & storage  & some security reason can put standalone gradle file into private cloud (Intranet)
+
+here demo put version.gradle into github
+
+```sh
+apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/version.gradle'
+```
+[apply from: 'https://raw.githubusercontent.com/CKS-ROC/Useful_Gradle/master/version.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L5)
+
 ## 三、已有章节
 
 ### 1、buildTypes
@@ -239,7 +248,7 @@ again use  apply from to import standalone gradle file :
 apply from: './configuration_productFlavors.gradle'
 ```
 
-[apply from: './configuration_buildtypes.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/002377af802711586ee7723a960d6d5e88a80996/app/build.gradle#L7)
+[apply from: './configuration_productFlavors.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/bf2c6e5e23490774f2c8a9473b42b42dfe0cd724/app/build.gradle#L8)
 
 
 ### 4、ProductFlavors风味包配置
