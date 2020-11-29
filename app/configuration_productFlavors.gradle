@@ -3,6 +3,8 @@ android {
     // 创建产品风味
     productFlavors {
         amd64 {
+            //TODO  this flavor demo sourceSets at  productFlavors item
+            //TODO  this flavor demo ndkBuild at  productFlavors item
             // 关联纬度
             dimension 'version'
             applicationIdSuffix '.v1'
@@ -27,8 +29,27 @@ android {
                     targets "libexample-one", "my-executible-demo"
                 }
             }
+            manifestPlaceholders = [
+                    hostName: "www.x86_64.com",
+                    logo    : "@drawable/logo",
+                    appName : "x86_64",
+            ]
+            sourceSets {
+                amd64 {
+                    java.srcDirs = ['src/main/java', '../flavor_x86/src/main/java']
+                }
+            }
+            ext {
+                API_HOST = [stage: "https://sit-api-report.x86_64lepenwang.com/", dev: "http://dev-api.x86_64.com.tw/", prod: "https://api.x86_64.com/"]
+            }
+            //FIXME fail use dependencies local module   : logo.png not change !!!
+//            dependencies.implementation 'org.cks.demo.res:res_x86:1.11.13'
+//            dependencies {
+//                implementation 'org.cks.demo.res:res_x86:1.11.13'
+//            }
         }
 
+        //TODO  this flavor demo set dependencies at  productFlavors.all
         x86 {
             dimension 'abi'
             applicationId 'com.zinc.bear'
@@ -45,9 +66,14 @@ android {
             buildConfigField('int', 'age', '26')
             matchingFallbacks = ['pro']
             missingDimensionStrategy 'version', 'v1'
+            ext {
+                API_HOST = [stage: "https://sit-api-report.x86lepenwang.com/", dev: "http://dev-api.x86.com.tw/", prod: "https://api.x86.com/"]
+            }
         }
 
         armV7 {
+            //TODO  this flavor demo set manifestPlaceholders at  productFlavors.all
+            //TODO  this flavor demo set applicationIdSuffix at  productFlavors.all
             dimension 'abi'
             applicationId 'com.zinc.shark'
             manifestPlaceholders = [
@@ -61,9 +87,17 @@ android {
             versionName '1.6.66'
             buildConfigField('String', 'name', '"JiangPengYong"')
             buildConfigField('int', 'age', '26')
+            ext {
+                API_HOST = [stage: "https://sit-api-report.armV7lepenwang.com/", dev: "http://dev-api.armV7.com.tw/", prod: "https://api.armV7.com/"]
+            }
+            //FIXME fail use dependencies local module   : logo.png not change !!!
+            dependencies {
+                implementation project(':res_armv7')
+            }
         }
 
         armV8 {
+            //TODO  this flavor demo set sourceSets at  build.gradle
             dimension 'abi'
             applicationId 'com.zinc.shark'
             manifestPlaceholders = [
@@ -77,6 +111,30 @@ android {
             versionName '1.6.66'
             buildConfigField('String', 'name', '"JiangPengYong"')
             buildConfigField('int', 'age', '26')
+            ext {
+                API_HOST = [stage: "https://sit-api-report.arm64_v8alepenwang.com/", dev: "http://dev-api.arm64_v8a.com.tw/", prod: "https://api.arm64_v8a.com/"]
+            }
+            //FIXME fail use dependencies local module   : logo.png not change !!!
+            dependencies {
+                implementation project(':res_arm64')
+            }
+        }
+    }
+
+    productFlavors.all { flavor ->
+        if (flavor.name.equals("armV7")) {
+            flavor.applicationIdSuffix "." + flavor.name
+            flavor.manifestPlaceholders = [
+                    hostName: "www.armv7.com",
+                    logo    : "@drawable/logo",
+                    appName : "armV7",
+            ]
+        }
+        //FIXME fail use dependencies local module   : logo.png not change !!!
+        if (flavor.name.equals("x86")) {
+            dependencies {
+                implementation project(":res_" + "$flavor.name")
+            }
         }
     }
 }
