@@ -1,0 +1,108 @@
+// https://developer.android.com/studio/publish/app-signing
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    signingConfigs {
+        gradleStudy {
+            keyAlias keystoreProperties['keyAlias1']
+            keyPassword keystoreProperties['keyPassword1']
+            storeFile file(keystoreProperties['storeFile1'])
+            storePassword keystoreProperties['storePassword1']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        xiaopenyou {
+            keyAlias keystoreProperties['keyAlias2']
+            keyPassword keystoreProperties['keyPassword2']
+            storeFile file(keystoreProperties['storeFile2'])
+            storePassword keystoreProperties['storePassword2']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        jiangpengyong {
+            keyAlias keystoreProperties['keyAlias3']
+            keyPassword keystoreProperties['keyPassword3']
+            storeFile file(keystoreProperties['storeFile3'])
+            storePassword keystoreProperties['storePassword3']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+
+        debug {
+            keyAlias keystoreProperties['keyAlias1']
+            keyPassword keystoreProperties['keyPassword1']
+            storeFile file(keystoreProperties['storeFile1'])
+            storePassword keystoreProperties['storePassword1']
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
+            matchingFallbacks = ['release', 'debug']
+            zipAlignEnabled false
+            minifyEnabled false
+            debuggable true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+//            signingConfig signingConfigs.gradleStudy
+            matchingFallbacks = ['release', 'debug']
+            zipAlignEnabled true
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        /**
+         * The `initWith` property allows you to copy configurations from other build types,
+         * then configure only the settings you want to change.
+         */
+        prod_debug.initWith(buildTypes.debug)
+        sit_debug.initWith(buildTypes.debug)
+        dev_debug.initWith(buildTypes.debug)
+        /**
+         * This one copies the debug build type, and then changes the manifest placeholder and application ID.
+         */
+        staging_debug {
+            initWith debug
+        }
+
+        prod_release.initWith(buildTypes.release)
+        sit_release.initWith(buildTypes.release)
+        dev_release.initWith(buildTypes.release)
+
+        prod_debug {}
+        prod_release {}
+
+        sit_debug {}
+        sit_release {}
+
+        dev_debug {}
+        dev_release {}
+    }
+
+    variantFilter { variant ->
+        def flavorName = variant.name
+        def buildTypename = variant.buildType.name.toString()
+        println "variantFilter Show flavor is " + flavorName + " with buildTypename : " + buildTypename
+//         println "variantFilter Show buildTypename !!  " + buildTypename//
+        def isDev = buildTypename.contains("dev")
+        //below ignore release or debug buildtype
+        if (buildTypename.equals('release') || buildTypename.equals('debug')) {
+//            println "Show match  buildtype "+variant.buildType.name
+            println "variantFilter flavor : " + flavorName + " with default buildType : " + buildTypename + " ignore"
+            variant.setIgnore(true)
+        }
+    }
+}

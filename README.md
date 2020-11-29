@@ -71,6 +71,34 @@ so must firset define version
 
 ```sh
 def version = this.ext.default_version()
+
+....
+task increaseVersion {
+    group "version Tasks"
+    doLast {
+        this.project.ext.increaseVersion("")
+    }
+}
+
+task increaseHotfixVersion {
+    group "version Tasks"
+    doLast {
+        this.project.ext.increaseHotfixVersion("")
+    }
+}
+
+task decreaseVersion {
+    group "version Tasks"
+    doLast {
+        this.project.ext.decreaseVersion("")
+    }
+}
+
+task showCurrentVersion {
+    group "version Tasks"
+    this.project.ext.currentVersion("")
+}
+
 ```
 
 [def version = this.ext.default_version()](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L10)
@@ -90,7 +118,7 @@ def version = this.ext.default_version()
 base on debug/release  buildTypes as real project have  debug/release/staging/prod/dev/... development environment
 so  can create extra development environment staging/sit/prod/dev/..  and all of extends some buildtype by initWith
 
-[prod_debug.initWith(buildTypes.debug)....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/0d2cff181f9f00b80f14c7c3032b5b5dcfe142b2/app/build.gradle#L103)
+[prod_debug.initWith(buildTypes.debug)....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/fa4b38aee2fcaac1c2e6ba3b3084e1b5efafba37/app/build.gradle#L103)
 
 ```sh
 buildTypes {
@@ -126,7 +154,7 @@ buildTypes {
 
 but sometime do not want  default buildTypes (debug / release ) can use setIgnore at [variantFilter](https://developer.android.com/studio/build/build-variants#filter-variants) to ignore some default buildType
 
-[setIgnore(true))....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/0d2cff181f9f00b80f14c7c3032b5b5dcfe142b2/app/build.gradle#L127)
+[setIgnore(true))....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/a8b8772eb1c37d84f064874523ec2d361d07767f/app/build.gradle#L127)
 ```sh
 variantFilter { variant ->
         def buildTypename = variant.buildType.name.toString()
@@ -135,6 +163,37 @@ variantFilter { variant ->
         }
 }
 ```
+
+the same also can export the section as standalone  gradle file
+
+[configuration_buildtypes.gradle](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/master/app/configuration_buildtypes.gradle)
+
+Note : because buildTypes contain signingConfig so must move signingConfigs at together
+Note : buildTypes is defiane at android plugin so export a standalone gradle file must put in android{} 
+
+```sh
+android {
+    signingConfigs {
+       ....
+    }
+
+    buildTypes {
+        debug {
+            ....
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+```
+
+
+again use  apply from to import standalone gradle file :
+
+```sh
+apply from: './configuration_buildtypes.gradle'
+```
+
+[apply from: './configuration_buildtypes.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L11)
 
 ### 2、defaultConfig
 
