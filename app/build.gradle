@@ -95,6 +95,33 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        /**
+         * The `initWith` property allows you to copy configurations from other build types,
+         * then configure only the settings you want to change.
+         */
+        prod_debug.initWith(buildTypes.debug)
+        sit_debug.initWith(buildTypes.debug)
+        dev_debug.initWith(buildTypes.debug)
+        /**
+         * This one copies the debug build type, and then changes the manifest placeholder and application ID.
+         */
+        staging_debug {
+            initWith debug
+        }
+
+        prod_release.initWith(buildTypes.release)
+        sit_release.initWith(buildTypes.release)
+        dev_release.initWith(buildTypes.release)
+
+        prod_debug {}
+        prod_release {}
+
+        sit_debug {}
+        sit_release {}
+
+        dev_debug {}
+        dev_release {}
     }
 
     flavorDimensions('abi', 'version')

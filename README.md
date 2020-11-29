@@ -60,15 +60,20 @@ now use  apply from to import standalone gradle file :
 ```sh
 apply from: './version.gradle'
 ```
+
+[apply from: './version.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L9)
+
 but something is different 
 
 now we must get version from extra 
 
 so must firset define version 
 
+
 ```sh
 def version = this.ext.default_version()
 ```
+[def version = this.ext.default_version()](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L10)
 
 ## 三、已有章节
 
@@ -81,6 +86,44 @@ def version = this.ext.default_version()
 - 掘金: [buildTypes——安卓gradle](https://juejin.im/post/5d7e01125188253a8305480a)
 
 - github代码: [传送门](https://github.com/zincPower/GradleStudy/blob/master/app/zinc_buildTypes.gradle)
+
+base on debug/release  buildTypes as real project have  debug/release/staging/prod/dev/... development environment
+so  can create extra development environment staging/sit/prod/dev/..  and all of extends some buildtype by initWith
+
+[prod_debug.initWith(buildTypes.debug)....](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/0d2cff181f9f00b80f14c7c3032b5b5dcfe142b2/app/build.gradle#L103)
+
+```sh
+buildTypes {
+        debug {
+           ....
+        }
+
+        release {
+            ....
+        }
+
+        prod_debug.initWith(buildTypes.debug)
+        sit_debug.initWith(buildTypes.debug)
+        dev_debug.initWith(buildTypes.debug)
+        staging_debug {
+            initWith debug
+        }
+
+        prod_release.initWith(buildTypes.release)
+        sit_release.initWith(buildTypes.release)
+        dev_release.initWith(buildTypes.release)
+
+        prod_debug {}
+        prod_release {}
+
+        sit_debug {}
+        sit_release {}
+
+        dev_debug {}
+        dev_release {}
+}
+```
+
 
 ### 2、defaultConfig
 
