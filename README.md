@@ -169,6 +169,7 @@ the same also can export the section as standalone  gradle file
 [configuration_buildtypes.gradle](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/master/app/configuration_buildtypes.gradle)
 
 Note : because buildTypes contain signingConfig so must move signingConfigs at together
+
 Note : buildTypes is defiane at android plugin so export a standalone gradle file must put in android{} 
 
 ```sh
@@ -193,7 +194,8 @@ again use  apply from to import standalone gradle file :
 apply from: './configuration_buildtypes.gradle'
 ```
 
-[apply from: './configuration_buildtypes.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/ef567cb2907434b9b208e398445e8f72dcdea911/app/build.gradle#L11)
+[apply from: './configuration_buildtypes.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/002377af802711586ee7723a960d6d5e88a80996/app/build.gradle#L7)
+
 
 ### 2、defaultConfig
 
@@ -212,6 +214,33 @@ apply from: './configuration_buildtypes.gradle'
 - 掘金: [flavorDimensions和productFlavors——安卓gradle](https://juejin.im/post/5da7215ef265da5b576bebbd)
 
 - github代码: [传送门](https://github.com/zincPower/GradleStudy/blob/master/app/zinc_flavor.gradle)
+
+the same also can export the productFlavors section as standalone  gradle file
+
+[configuration_productFlavors.gradle](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/master/app/configuration_productFlavors.gradle)
+
+
+Note : productFlavors is defiane at android plugin so export a standalone gradle file must put in android{} 
+
+```sh
+android {
+    productFlavors {
+        amd64 {
+            ....
+        }
+    }
+}
+```
+
+
+again use  apply from to import standalone gradle file :
+
+```sh
+apply from: './configuration_productFlavors.gradle'
+```
+
+[apply from: './configuration_buildtypes.gradle'](https://github.com/CMingTseng/Gradle_Flavor_PlugIn_Demo/blob/002377af802711586ee7723a960d6d5e88a80996/app/build.gradle#L7)
+
 
 ### 4、ProductFlavors风味包配置
 
